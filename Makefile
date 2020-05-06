@@ -68,11 +68,13 @@ $(GOYACC):
 
 GOFUZZBUILD = $(GOBIN)/go-fuzz-build
 $(GOFUZZBUILD):
-	go get $(GOGETFLAGS) github.com/dvyukov/go-fuzz/go-fuzz-build
+	go get $(GOGETFLAGS) github.com/mdempsky/go114-fuzz-build
+	ln -s $(GOPATH)/bin/go114-fuzz-build $(GOPATH)/bin/go-fuzz-build
 
 GOFUZZ = $(GOBIN)/go-fuzz
 $(GOFUZZ):
 	go get $(GOGETFLAGS) github.com/dvyukov/go-fuzz/go-fuzz
+
 
 GOVERALLS = $(GOBIN)/goveralls
 $(GOVERALLS):
@@ -237,7 +239,7 @@ LIB_FUZZING_ENGINE ?= -libfuzzer
 OUT ?= .
 
 $(OUT)/vm-fuzzer: $(GOFILES) | $(GOFUZZBUILD)
-	$(GOFUZZBUILD) -libfuzzer -o fuzzer.a ./internal/vm
+	$(GOFUZZBUILD) -o fuzzer.a github.com/google/mtail/internal/vm
 	$(CXX) $(CXXFLAGS) $(LIB_FUZZING_ENGINE) fuzzer.a -lpthread -o $(OUT)/vm-fuzzer
 
 $(OUT)/vm-fuzzer.dict: mgen
